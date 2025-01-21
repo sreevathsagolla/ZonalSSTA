@@ -1,3 +1,4 @@
+import mpld3
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -132,3 +133,8 @@ show_all(None)
 
 # Show plot
 plt.show()
+
+html_str = mpld3.fig_to_html(fig)
+Html_file= open("index.html","w")
+Html_file.write(html_str)
+Html_file.close()
