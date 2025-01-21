@@ -99,6 +99,7 @@ fig.update_layout(
 
 # Dash App
 app = dash.Dash(__name__)
+server = app.server
 app.layout = html.Div([
     dcc.Graph(id='time-series-graph', figure=fig),
     html.Div([
