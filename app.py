@@ -12,6 +12,8 @@ df['TIME'] = pd.to_datetime(df['TIME'])
 df.set_index('TIME', inplace=True)
 df = df[~((df.index.month == 2) & (df.index.day == 29))]  # Remove leap days
 
+df = df[['GLOBAL', 'POLAR (N)', 'HIGH-LATITUDES (N)', 'MID-LATITUDES (N)', 'TROPICS' ,'MID-LATITUDES (S)', 'HIGH-LATITUDES (S)', 'POLAR (S)']]
+
 doy = {str(x)[5:10]: i for i, x in enumerate(pd.date_range('1901-01-01', '1901-12-31', freq='1D'), 1)}
 
 # Define x-ticks
@@ -25,9 +27,11 @@ with open(image_path, "rb") as img_file:
 image_source = f"data:image/png;base64,{encoded_image}"
 
 # Create subplots
-fig = sp.make_subplots(rows=2, cols=3, subplot_titles=["", *df.columns],
+fig = sp.make_subplots(rows=3, cols=3, subplot_titles=["", *df.columns],
                        specs=[[{"type": "image"}, {'type': 'xy'}, {'type': 'xy'}],
-                              [{'type': 'xy'}, {'type': 'xy'}, {'type': 'xy'}]], horizontal_spacing = 0.05, vertical_spacing = 0.1)
+                              [{'type': 'xy'}, {'type': 'xy'}, {'type': 'xy'}],
+                             [{'type': 'xy'}, {'type': 'xy'}, {'type': 'xy'}]], horizontal_spacing = 0.05, vertical_spacing = 0.1)
+
 
 # Add latitude zone image
 fig.add_trace(
