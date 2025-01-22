@@ -3,6 +3,6 @@ cartopy
 pandas
 numpy
 mplcursors
-base64
+gunicorn
 dash
 plotly
