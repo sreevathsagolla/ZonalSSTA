@@ -5,7 +5,7 @@ import plotly.subplots as sp
 import numpy as np
 import pandas as pd
 import base64
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 # File paths
 data_files = {
@@ -36,7 +36,7 @@ with open(image_path, "rb") as img_file:
     encoded_image = base64.b64encode(img_file.read()).decode()
 image_source = f"data:image/png;base64,{encoded_image}"
 
-def create_figure(df):
+def create_figure(df, show_all=True):
     fig = sp.make_subplots(rows=3, cols=3, subplot_titles=["", *df.columns],
                            specs=[[{"type": "image"}, {'type': 'xy'}, {'type': 'xy'}],
                                   [{'type': 'xy'}, {'type': 'xy'}, {'type': 'xy'}],
@@ -68,12 +68,12 @@ def create_figure(df):
                     y=df[df.index.year == year][col],
                     mode='lines',
                     name=str(year),
-                    hovertemplate='<b>Year:</b> %{text}<br><b>SSTA:</b> %{y:.2f}<br><b>DOY:</b> %{x}<extra></extra>',
+                    hovertemplate='<b>Year:</b> %{text}<br><b>ANOM:</b> %{y:.2f}<br><b>DOY:</b> %{x}<extra></extra>',
                     text=[str(year)] * len(df[df.index.year == year].index),
-                    line=dict(color=color, width=1 if year <= 2022 else 2),
-                    opacity=alpha,
+                    line=dict(color=color, width=1 if year<=2022 else 2),
+                    opacity=alpha if show_all else 0,
                     legendgroup=str(year),
-                    showlegend=show_legend
+                    showlegend=show_legend,# if show_all else False,
                 ),
                 row=row,
                 col=col_pos
@@ -98,7 +98,8 @@ def create_figure(df):
             x=0.5,
             xanchor="center",
             y=-0.1,
-            yanchor="top"
+            yanchor="top",
+            itemsizing='constant'
         ),
         hovermode="closest"
     )
@@ -126,11 +127,18 @@ app.layout = html.Div([
 
 @app.callback(
     Output('time-series-graph', 'figure'),
-    Input('data-selector', 'value')
+    [Input('data-selector', 'value'),
+     Input('show-all', 'n_clicks'),
+     Input('hide-all', 'n_clicks')],
+    prevent_initial_call=True
 )
-def update_figure(selected_data):
-    df = load_data(selected_data)
-    return create_figure(df)
+def update_figure(selected_data, show_all_clicks, hide_all_clicks):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return create_figure(load_data(selected_data))
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    show_all = button_id != 'hide-all'
+    return create_figure(load_data(selected_data), show_all)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port = 8899)
