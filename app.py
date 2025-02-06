@@ -19,7 +19,7 @@ def load_data(data_type):
     df['TIME'] = pd.to_datetime(df['TIME'])
     df.set_index('TIME', inplace=True)
     df = df[~((df.index.month == 2) & (df.index.day == 29))]  # Remove leap days
-    df = df[['GLOBAL', 'POLAR (N)', 'HIGH-LATITUDES (N)', 'MID-LATITUDES (N)', 'TROPICS', 'MID-LATITUDES (S)', 'HIGH-LATITUDES (S)', 'POLAR (S)']]
+    df = df[['GLOBAL', 'TROPICS', 'POLAR (N)', 'HIGH-LATITUDES (N)', 'MID-LATITUDES (N)', 'POLAR (S)', 'HIGH-LATITUDES (S)', 'MID-LATITUDES (S)']]
     return df
 
 df = load_data("SST Anomaly")  # Default dataset
