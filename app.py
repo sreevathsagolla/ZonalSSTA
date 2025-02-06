@@ -71,7 +71,7 @@ def create_figure(df, show_all=True):
                     hovertemplate='<b>Year:</b> %{text}<br><b>ANOM:</b> %{y:.2f}<br><b>DOY:</b> %{x}<extra></extra>',
                     text=[str(year)] * len(df[df.index.year == year].index),
                     line=dict(color=color, width=1 if year<=2022 else 2),
-                    opacity=alpha if show_all else 0,
+                    visible='legendonly' if not show_all else True,
                     legendgroup=str(year),
                     showlegend=show_legend,# if show_all else False,
                 ),
